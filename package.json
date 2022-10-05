@@ -1,0 +1,45 @@
+{
+  "name": "node-deno",
+  "version": "0.0.1",
+  "description": "Invoke Deno from Node",
+  "main": "dist/cjs/index.js",
+  "browser": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/thefrontside/node-deno.git",
+  "homepage": "https://github.com/thefrontside/node-deno.git",
+  "author": "Frontside Engineering <engineering@frontside.com>",
+  "license": "MIT",
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "lint": "eslint \"{src,test}/**/*.ts\"",
+    "build": "tsc --build ./tsconfig.build.json && yarn build:es2015 && yarn build:commonjs",
+    "build:es2015": "tsc --project ./tsconfig.build.json --outdir dist/esm --module es2015",
+    "build:commonjs": "tsc --project ./tsconfig.build.json --outdir dist/cjs --module commonjs"
+  },
+  "dependencies": {
+    "effection": "^2.0.5",
+    "@effection/process": "^2.1.1",
+    "deno-bin": "^1.26.0"
+  },
+  "devDependencies": {
+    "@frontside/tsconfig": "^3.0.0",
+    "@types/node": "^14.17.5",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.8.4"
+  },
+  "volta": {
+    "node": "18.10.0",
+    "yarn": "1.22.11"
+  }
+}
