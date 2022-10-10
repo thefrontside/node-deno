@@ -3,9 +3,9 @@ import type { ProcessResult } from '@effection/process';
 
 import { exec } from '@effection/process';
 
-export function* deno(cmd: string): Operation<ProcessResult> {
+export function* deno(cmd: string, env: Record<string,string> = {}): Operation<ProcessResult> {
   let denoExePath = require.resolve('deno-bin/bin/deno');
-  return yield exec(`${denoExePath} ${cmd}`).join();
+  return yield exec(`${denoExePath} ${cmd}`, { env }).join();
 }
 
 export const CompilationTargets = [
@@ -20,10 +20,13 @@ export type CompilationTarget = typeof CompilationTargets[number];
 export interface CompileOptions {
   output: string;
   target: CompilationTarget;
-  entrypoint: string;
+  entrypoint: string | string[];
   allowRead?: boolean;
   allowNet?: boolean | string[];
+  allowEnv?: boolean | string[];
+  noPrompt?: boolean;
   unstable?: boolean;
+  env?: Record<string, string>;
 }
 
 export function compile(options: CompileOptions) {
@@ -38,9 +41,23 @@ export function compile(options: CompileOptions) {
       args.push(`--allow-net`);
     }
   }
+  if (!!options.allowEnv) {
+    if (Array.isArray(options.allowEnv)) {
+      args.push(`--allow-env=${options.allowEnv.join(',')}`);
+    } else {
+      args.push(`--allow-env`);
+    }
+  }
   if (options.unstable) {
     args.push(`--unstable`);
   }
+  if (options.noPrompt) {
+    args.push(`--no-prompt`);
+  }
 
-  return deno(`compile ${args.join(' ')} ${options.entrypoint}`);
+  //@ts-expect-error concating an array or a scalar results in ana array.
+  let entrypoint: string[] = [].concat(options.entrypoint);
+
+  let { env } = options;
+  return deno(`compile ${args.join(' ')} ${entrypoint.join(' ')}`, env);
 }
