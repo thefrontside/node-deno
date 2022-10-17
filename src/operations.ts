@@ -22,6 +22,7 @@ export interface CompileOptions {
   target: CompilationTarget;
   entrypoint: string | string[];
   allowRead?: boolean;
+  allowRun?: boolean;
   allowNet?: boolean | string[];
   allowEnv?: boolean | string[];
   noPrompt?: boolean;
@@ -33,6 +34,9 @@ export function compile(options: CompileOptions) {
   let args = [`--output=${options.output}`, `--target=${options.target}`];
   if (options.allowRead) {
     args.push('--allow-read');
+  }
+  if (options.allowRun) {
+    args.push('--allow-run');
   }
   if (!!options.allowNet) {
     if (Array.isArray(options.allowNet)) {
