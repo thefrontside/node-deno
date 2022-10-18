@@ -1,13 +1,17 @@
 import * as ops from './operations';
-import { run } from 'effection';
+import { run as task } from 'effection';
 
 export { CompilationTargets } from './operations';
 export type { CompilationTarget } from './operations';
 
 export function deno(...args: Parameters<typeof ops.deno>) {
-  return run(ops.deno(...args));
+  return task(ops.deno(...args));
 }
 
 export function compile(...options: Parameters<typeof ops.compile>) {
-  return run(ops.compile(...options));
+  return task(ops.compile(...options));
+}
+
+export function run(...options: Parameters<typeof ops.run>) {
+  return task(ops.run(...options));
 }

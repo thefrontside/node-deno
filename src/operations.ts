@@ -17,9 +17,7 @@ export const CompilationTargets = [
 
 export type CompilationTarget = typeof CompilationTargets[number];
 
-export interface CompileOptions {
-  output: string;
-  target: CompilationTarget;
+export interface RunOptions {
   entrypoint: string | string[];
   allowRead?: boolean;
   allowRun?: boolean;
@@ -31,8 +29,34 @@ export interface CompileOptions {
   env?: Record<string, string>;
 }
 
+export function run(options: RunOptions) {
+  let args = runOptions(options);
+
+  //@ts-expect-error concating an array or a scalar results in ana array.
+  let entrypoint: string[] = [].concat(options.entrypoint);
+
+  let { env } = options;
+  return deno(`run ${args.join(' ')} ${entrypoint.join(' ')}`, env);
+}
+
+export interface CompileOptions extends RunOptions {
+  output: string;
+  target: CompilationTarget;
+}
+
 export function compile(options: CompileOptions) {
-  let args = [`--output=${options.output}`, `--target=${options.target}`];
+  let args = runOptions(options)
+    .concat([`--output=${options.output}`, `--target=${options.target}`]);
+
+  //@ts-expect-error concating an array or a scalar results in ana array.
+  let entrypoint: string[] = [].concat(options.entrypoint);
+
+  let { env } = options;
+  return deno(`compile ${args.join(' ')} ${entrypoint.join(' ')}`, env);
+}
+
+function runOptions(options: RunOptions): string[] {
+  let args = [];
   if (options.allowRead) {
     args.push('--allow-read');
   }
@@ -62,10 +86,5 @@ export function compile(options: CompileOptions) {
   if (options.noPrompt) {
     args.push(`--no-prompt`);
   }
-
-  //@ts-expect-error concating an array or a scalar results in ana array.
-  let entrypoint: string[] = [].concat(options.entrypoint);
-
-  let { env } = options;
-  return deno(`compile ${args.join(' ')} ${entrypoint.join(' ')}`, env);
+  return args;
 }
