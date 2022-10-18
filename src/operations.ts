@@ -25,6 +25,7 @@ export interface CompileOptions {
   allowRun?: boolean;
   allowNet?: boolean | string[];
   allowEnv?: boolean | string[];
+  location?: string;
   noPrompt?: boolean;
   unstable?: boolean;
   env?: Record<string, string>;
@@ -51,6 +52,9 @@ export function compile(options: CompileOptions) {
     } else {
       args.push(`--allow-env`);
     }
+  }
+  if (options.location) {
+    args.push(`--location=${options.location}`);
   }
   if (options.unstable) {
     args.push(`--unstable`);

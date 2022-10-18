@@ -1,6 +1,6 @@
 {
   "name": "node-deno",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Invoke Deno from Node",
   "main": "dist/cjs/index.js",
   "browser": "dist/esm/index.js",
